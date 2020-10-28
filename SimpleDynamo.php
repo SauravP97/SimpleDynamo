@@ -1,10 +1,14 @@
 <?php
 include_once "./Dynamo/Dynamo.php";
 include_once "./QueryBuilder/PutItem.php";
+include_once "./QueryBuilder/GetItem.php";
 
 class SimpleDynamo{
     private $dynamoDb;
     private $queryParams;
+    private $projectAttributes;
+    private $consistenrRead;
+
     /*
     * Simple Dynamo Class acts as an interface between
     * the user friendly simple Dynamo Queries and the
@@ -48,6 +52,27 @@ class SimpleDynamo{
         }
     }
 
+    function getItem($key, $tableName){
+        $getItem = new GetItem($key, $tableName);
+        if($this->projectAttributes){   //If there exist Projected Attributes
+            //Set the Projected Attributes in the Get Item class
+            $getItem->setProjectAttribute($this->projectAttributes);
+        }
+        if($this->consistenrRead){      //If Strongly Consistent Read is made
+            //Set the Consistent Read attribute of Get Item class
+            $getItem->setConsistentReadAttribute();
+        }
+        //Generating the formatted query
+        $this->queryParams = $getItem->getFormattedQuery();
+        try{
+            $this->showQueryParameters();
+            //$this->dynamoDb->putItem($dynamoQuery);
+        }
+        catch(Exception $e){
+            throw new Exception($e->getMessage());
+        }
+    }
+
     /*
     * Function acts as a logger to
     * print the query parameters. If
@@ -59,6 +84,24 @@ class SimpleDynamo{
     */
     function showQueryParameters(){
         echo print_r($this->queryParams, true)."\n";
+    }
+
+    /*
+    * Function sets the Projected Attributes
+    * while making a Dynamo Operation.
+    * Optional for usage
+    */
+    function project($projectAttributes){
+        $this->projectAttributes = $projectAttributes;
+    }
+
+    /*
+    * Function sets the Dynamo Read
+    * Operation to be Strongly Consistent
+    * Optional for usage
+    */
+    function makeConsistentRead(){
+        $this->consistenrRead = true;
     }
 }
 ?>
