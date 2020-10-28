@@ -1,7 +1,10 @@
 <?php
+include_once "./Dynamo/Dynamo.php";
+include_once "./QueryBuilder/PutItem.php";
+
 class SimpleDynamo{
     private $dynamoDb;
-
+    private $queryParams;
     /*
     * Simple Dynamo Class acts as an interface between
     * the user friendly simple Dynamo Queries and the
@@ -35,13 +38,27 @@ class SimpleDynamo{
     
     function putItem($query, $tableName){
         $putItem = new PutItem($query, $tableName);
-        $dynamoQuery = $putItem->getFormattedQuery();
+        $this->queryParams = $putItem->getFormattedQuery();
         try{
-            $this->dynamoDb->putItem($dynamoQuery);
+            $this->showQueryParameters();
+            //$this->dynamoDb->putItem($dynamoQuery);
         }
         catch(Exception $e){
             throw new Exception($e->getMessage());
         }
+    }
+
+    /*
+    * Function acts as a logger to
+    * print the query parameters. If
+    * you have any issues in querying or
+    * any exception pops up then you can
+    * debug the problem by viewing the query
+    * parameters, by invoking the
+    * showQueryParameters function
+    */
+    function showQueryParameters(){
+        echo print_r($this->queryParams, true)."\n";
     }
 }
 ?>

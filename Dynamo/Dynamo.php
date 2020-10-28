@@ -2,7 +2,7 @@
 require './vendor/autoload.php';
 date_default_timezone_set('Asia/Kolkata');
 use Aws\DynamoDb\Exception\DynamoDbException;
-include_once "../config.php";
+include_once "./config.php";
 
 class Dynamo
 {

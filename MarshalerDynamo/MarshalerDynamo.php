@@ -3,7 +3,7 @@ require './vendor/autoload.php';
 date_default_timezone_set('Asia/Kolkata');
 use Aws\DynamoDb\Exception\DynamoDbException;
 use Aws\DynamoDb\Marshaler;
-include_once "../config.php";
+include_once "./config.php";
 
 class MarshalerDynamo{
 
