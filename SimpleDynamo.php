@@ -2,12 +2,17 @@
 include_once "./Dynamo/Dynamo.php";
 include_once "./QueryBuilder/PutItem.php";
 include_once "./QueryBuilder/GetItem.php";
+include_once "./QueryBuilder/Query.php";
 
 class SimpleDynamo{
     private $dynamoDb;
     private $queryParams;
     private $projectAttributes;
-    private $consistenrRead;
+    private $consistentRead;
+    private $indexName;
+    private $sortInDescendingOrder;
+    private $limit;
+    private $selectAttribute;
 
     /*
     * Simple Dynamo Class acts as an interface between
@@ -58,13 +63,45 @@ class SimpleDynamo{
             //Set the Projected Attributes in the Get Item class
             $getItem->setProjectAttribute($this->projectAttributes);
         }
-        if($this->consistenrRead){      //If Strongly Consistent Read is made
+        if($this->consistentRead){      //If Strongly Consistent Read is made
             //Set the Consistent Read attribute of Get Item class
             $getItem->setConsistentReadAttribute();
         }
-        //Generating the formatted query
-        $this->queryParams = $getItem->getFormattedQuery();
         try{
+            //Generating the formatted query
+            $this->queryParams = $getItem->getFormattedQuery();
+            $this->showQueryParameters();
+            //$this->dynamoDb->putItem($dynamoQuery);
+        }
+        catch(Exception $e){
+            throw new Exception($e->getMessage());
+        }
+    }
+
+    function query($keyCondition, $tableName){
+        $query = new Query($keyCondition, $tableName);
+        if($this->projectAttributes){   //If there exist Projected Attributes
+            //Set the Projected Attributes in the Get Item class
+            $query->setProjectAttribute($this->projectAttributes);
+        }
+        if($this->consistentRead){      //If Strongly Consistent Read is made
+            //Set the Consistent Read attribute of Get Item class
+            $query->setConsistentReadAttribute();
+        }
+        if($this->indexName){
+            $query->setIndexName($this->indexName);
+        }
+        if($this->sortInDescendingOrder){
+            $query->setScanIndexAttribute();
+        }
+        if($this->limit){
+            $query->limitQueryItems($this->limit);
+        }
+        if($this->selectAttribute){
+            $query->setSelectAttribute($this->selectAttribute);
+        }
+        try{
+            $this->queryParams = $query->getFormattedQuery();
             $this->showQueryParameters();
             //$this->dynamoDb->putItem($dynamoQuery);
         }
@@ -101,7 +138,23 @@ class SimpleDynamo{
     * Optional for usage
     */
     function makeConsistentRead(){
-        $this->consistenrRead = true;
+        $this->consistentRead = true;
+    }
+
+    function setIndexName($indexName){
+        $this->indexName = $indexName;
+    }
+
+    function setScanIndexAttribute(){
+        $this->sortInDescendingOrder = True;
+    }
+
+    function limitQueryItems($limit){
+        $this->limit = $limit;
+    }
+
+    function setSelectAttribute($selectAttribute){
+        $this->selectAttribute = $selectAttribute;
     }
 }
 ?>
