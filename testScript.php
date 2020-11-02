@@ -15,5 +15,6 @@ $simpleDynamo->project('id, key');
 $simpleDynamo->setScanIndexAttribute();
 $simpleDynamo->limitQueryItems(100);
 $simpleDynamo->setSelectAttribute('Count');
+$simpleDynamo->applyFilters("set key = :PREMIUM_KEY and value = :100");
 $simpleDynamo->query('key = :keyName and value = :valueName','Table-1');
 ?>

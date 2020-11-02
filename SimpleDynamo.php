@@ -13,6 +13,7 @@ class SimpleDynamo{
     private $sortInDescendingOrder;
     private $limit;
     private $selectAttribute;
+    private $filterExpression;
 
     /*
     * Simple Dynamo Class acts as an interface between
@@ -89,16 +90,30 @@ class SimpleDynamo{
             $query->setConsistentReadAttribute();
         }
         if($this->indexName){
+            //Set the Index name on which query will be performed
+            //If left unset, then Primary Key is queried by default
             $query->setIndexName($this->indexName);
         }
         if($this->sortInDescendingOrder){
+            // Sort the query results in descending order
+            // If left unset then query will be returned
+            // in ascending order by default
             $query->setScanIndexAttribute();
         }
         if($this->limit){
+            // Limiting the number of Items returned
+            // after a successful query
             $query->limitQueryItems($this->limit);
         }
         if($this->selectAttribute){
+            // Setting up the Select parameter in the
+            // dynamo query
             $query->setSelectAttribute($this->selectAttribute);
+        }
+        if($this->filterExpression){
+            // Setting up the Filter Expression for the
+            // Dynamo query
+            $query->applyFilters($this->filterExpression);
         }
         try{
             $this->queryParams = $query->getFormattedQuery();
@@ -141,20 +156,44 @@ class SimpleDynamo{
         $this->consistentRead = true;
     }
 
+    /*
+    * Function sets the Index name for
+    * making a query in DynamoDB
+    */
     function setIndexName($indexName){
         $this->indexName = $indexName;
     }
 
+    /*
+    * Function allows the result items 
+    * to be returned in descending order
+    */
     function setScanIndexAttribute(){
         $this->sortInDescendingOrder = True;
     }
 
+    /*
+    * The function limits the number of
+    * items returned per query
+    */
     function limitQueryItems($limit){
         $this->limit = $limit;
     }
 
+    /*
+    * The function sets the Select attribute
+    * for querying in DynamoDB
+    */
     function setSelectAttribute($selectAttribute){
         $this->selectAttribute = $selectAttribute;
+    }
+
+    /*
+    * The function sets the Filter Expression
+    * for querying in DynamoDB
+    */
+    function applyFilters($filterExpression){
+        $this->filterExpression = $filterExpression;
     }
 }
 ?>
