@@ -3,6 +3,7 @@ include_once "./Dynamo/Dynamo.php";
 include_once "./QueryBuilder/PutItem.php";
 include_once "./QueryBuilder/GetItem.php";
 include_once "./QueryBuilder/Query.php";
+include_once "./QueryBuilder/UpdateItem.php";
 
 class SimpleDynamo{
     private $dynamoDb;
@@ -14,6 +15,7 @@ class SimpleDynamo{
     private $limit;
     private $selectAttribute;
     private $filterExpression;
+    private $updateExpression;
 
     /*
     * Simple Dynamo Class acts as an interface between
@@ -125,6 +127,23 @@ class SimpleDynamo{
         }
     }
 
+    function update($tableName, $key){
+        $update = new UpdateItem($tableName, $key);
+        if($this->updateExpression){
+            $update->setUpdateExpression($this->updateExpression);
+        }
+        if($this->filterExpression){
+            $update->applyFilters($this->filterExpression);
+        }
+        try{
+            $this->queryParams = $update->getFormattedQuery();
+            $this->showQueryParameters();
+        }
+        catch(Exception $e){
+            throw new Exception($e->getMessage());
+        }
+    }
+
     /*
     * Function acts as a logger to
     * print the query parameters. If
@@ -194,6 +213,14 @@ class SimpleDynamo{
     */
     function applyFilters($filterExpression){
         $this->filterExpression = $filterExpression;
+    }
+
+    /*
+    * The function sets the Update Expression
+    * for update operation in DynamoDB
+    */
+    function setUpdateExpression($updateExpression){
+        $this->updateExpression = $updateExpression;
     }
 }
 ?>

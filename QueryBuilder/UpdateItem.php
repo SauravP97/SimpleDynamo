@@ -1,19 +1,14 @@
 <?php
 include_once "./MarshalerDynamo/MarshalerDynamo.php";
 
-class Query{
+class UpdateItem{
+    private $key;
     private $tableName;
     private $marshaler;
-    private $indexName;
-    private $keyCondition;
-    private $filterExpression;
-    private $limit;
-    private $sortedInDescendingOrder;
-    private $selectAttribute;
+    private $updateExpression;
     private $expressionAttributeValues;
     private $expressionAttributeNames;
-    private $projectAttributes;
-    private $consistentRead;
+    private $filterExpression;
     private $variableCount;
 
     /*
@@ -24,12 +19,10 @@ class Query{
     * The function initializes the Marshaker as well
     * for further data processing. 
     */
-    function __construct($keyCondition, $tableName){
-        $this->keyCondition = $keyCondition;
+    function __construct($tableName, $key){
+        $this->key = $key;
         $this->tableName = $tableName;
         $this->marshaler = new MarshalerDynamo();
-        $this->expressionAttributeNames = array();
-        $this->expressionAttributeValues = array();
         $this->variableCount = 1;
     }
 
@@ -43,71 +36,26 @@ class Query{
     * in which the operation is destined to be made.
     */
     function getFormattedQuery(){
-        $this->keyCondition = $this->checkForReservedKeywords($this->keyCondition, " ");
-        $keyConditionChanged = $this->checkForQueryValues($this->keyCondition);
+        $dynamoKey = $this->marshaler->marshalItem($this->key);
         $queryParams = [
             "TableName" => $this->tableName,
-            "KeyConditionExpression" => $keyConditionChanged
+            "Key" => $dynamoKey
         ];
+        if($this->updateExpression){
+            $queryParams['UpdateExpression'] = $this->updateExpression;
+        }
         if(count($this->expressionAttributeNames)){
             $queryParams['ExpressionAttributeNames'] = $this->expressionAttributeNames;
         }
         if(count($this->expressionAttributeValues)){
             $queryParams['ExpressionAttributeValues'] = $this->marshaler->marshalItem($this->expressionAttributeValues);
         }
-        if($this->projectAttributes){
-            $queryParams['ProjectionExpression'] = $this->projectAttributes;
-        }
-        if($this->consistentRead){
-            $queryParams['ConsistentRead'] = True;
-        }
-        if($this->indexName){
-            $queryParams['IndexName'] = $this->indexName;
-        }
-        if($this->sortedInDescendingOrder){
-            $queryParams['ScanIndexForward'] = False;
-        }
-        if($this->limit){
-            $queryParams['Limit'] = $this->limit;
-        }
-        if($this->selectAttribute){
-            $queryParams['Select'] = $this->selectAttribute;
-        }
         if($this->filterExpression){
-            $queryParams['FilterExpression'] = $this->filterExpression;
+            $queryParams['ConditionExpression'] = $this->filterExpression;
         }
         return $queryParams;
     }
 
-    function setProjectAttribute($projectAttributes){
-        $this->projectAttributes = $this->checkForReservedKeywords($projectAttributes, ",");
-    }
-
-    function setConsistentReadAttribute(){
-        $this->consistentRead = true;
-    }
-
-    function setIndexName($indexName){
-        $this->indexName = $indexName;
-    }
-
-    function setScanIndexAttribute(){
-        $this->sortedInDescendingOrder = True;
-    }
-
-    function limitQueryItems($limit){
-        $this->limit = $limit;
-    }
-
-    function setSelectAttribute($selectAttribute){
-        $this->selectAttribute = $selectAttribute;
-    }
-
-    function applyFilters($filterExpression){
-        $this->filterExpression = $this->checkForReservedKeywords($filterExpression, " ");
-        $this->filterExpression = $this->checkForQueryValues($this->filterExpression);
-    }
-    
     /*
     * Function checks for presence of a reserved
     * keyword in the input string, if any reserved
@@ -154,6 +102,16 @@ class Query{
         }
 
         return $keyConditionChanged;
+    }
+
+    function setUpdateExpression($updateExpression){
+        $this->updateExpression = $this->checkForReservedKeywords($updateExpression, " ");
+        $this->updateExpression = $this->checkForQueryValues($this->updateExpression);
+    }
+
+    function applyFilters($filterExpression){
+        $this->filterExpression = $this->checkForReservedKeywords($filterExpression, " ");
+        $this->filterExpression = $this->checkForQueryValues($this->filterExpression);
     }
 }
 ?>
