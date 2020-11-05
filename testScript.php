@@ -21,8 +21,12 @@ $simpleDynamo->query('key = :keyName and value = :valueName','Table-1');
 $simpleDynamo->setUpdateExpression('set key = :PREMIUM_STRING and value = :101');
 $simpleDynamo->applyFilters('key1 = :PREMIIUM_PLUS_MEMS');
 $simpleDynamo->update('Table-1',['id'=>'ID_1190', 'key'=>'PREMIUM_VALUE']);
-*/
 
 $simpleDynamo->applyFilters('key = :PREMIIUM_PLUS_MEMS');
 $simpleDynamo->delete('Table-1', ['id'=>'ID_1190', 'key'=>'PREMIUM_VALUE']);
+*/
+
+$simpleDynamo->project('id, key');
+$simpleDynamo->applyFilters('key = :PREMIIUM_PLUS_MEMS');
+$simpleDynamo->scan("Table-1");
 ?>

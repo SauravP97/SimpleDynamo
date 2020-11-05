@@ -5,6 +5,7 @@ include_once "./QueryBuilder/GetItem.php";
 include_once "./QueryBuilder/Query.php";
 include_once "./QueryBuilder/UpdateItem.php";
 include_once "./QueryBuilder/DeleteItem.php";
+include_once "./QueryBuilder/Scan.php";
 
 class SimpleDynamo{
     private $dynamoDb;
@@ -159,6 +160,22 @@ class SimpleDynamo{
         }
     }
 
+    function scan($tableName){
+        $scan = new Scan($tableName);
+        if($this->projectAttributes){
+            $scan->setProjectAttribute($this->projectAttributes);
+        }
+        if($this->filterExpression){
+            $scan->applyFilters($this->filterExpression);
+        }
+        try{
+            $this->queryParams = $scan->getFormattedQuery();
+            $this->showQueryParameters();
+        }
+        catch(Exception $e){
+            throw new Exception($e->getMessage());
+        }
+    }
     /*
     * Function acts as a logger to
     * print the query parameters. If

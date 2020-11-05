@@ -40,8 +40,7 @@ class Dynamo
         }
     }
 
-    function getItem($params)
-    {
+    function getItem($params){
         try {
             $result = $this->dynamodb->getItem($params);
             return $result;
@@ -51,8 +50,7 @@ class Dynamo
         }
     }
 
-    function query($params)
-    {
+    function query($params){
         try {
             $result = $this->dynamodb->query($params);
             return $result;
@@ -61,5 +59,37 @@ class Dynamo
             throw new Exception($e->getMessage());
         }
     }
+
+    function updateItem($params){
+        try{
+            $result = $this->dynamodb->updateItem($params);
+            return $result;
+        }
+        catch(Exception $e){
+            error_log($e->getMessage());
+            throw new Exception($e->getMessage());
+        }
+    }
+
+    function deleteItem($params){
+        try{
+            $result = $this->dynamodb->deleteItem($params);
+            return true;
+        }
+        catch(Exception $e){
+            error_log($e->getMessage());
+            throw new Exception($e->getMessage());
+        }
+    }
+
+    function scan($params){
+        try{
+            $result = $this->dynamodb->scan($params);
+            return $result;
+        }
+        catch(Exception $e){
+            error_log($e->getMessage());
+            throw new Exception($e->getMessage());
+        }
+    }
 }
-?>
