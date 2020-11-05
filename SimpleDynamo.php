@@ -4,6 +4,7 @@ include_once "./QueryBuilder/PutItem.php";
 include_once "./QueryBuilder/GetItem.php";
 include_once "./QueryBuilder/Query.php";
 include_once "./QueryBuilder/UpdateItem.php";
+include_once "./QueryBuilder/DeleteItem.php";
 
 class SimpleDynamo{
     private $dynamoDb;
@@ -137,6 +138,20 @@ class SimpleDynamo{
         }
         try{
             $this->queryParams = $update->getFormattedQuery();
+            $this->showQueryParameters();
+        }
+        catch(Exception $e){
+            throw new Exception($e->getMessage());
+        }
+    }
+
+    function delete($tableName, $key){
+        $delete = new DeleteItem($tableName, $key);
+        if($this->filterExpression){
+            $delete->applyFilters($this->filterExpression);
+        }
+        try{
+            $this->queryParams = $delete->getFormattedQuery();
             $this->showQueryParameters();
         }
         catch(Exception $e){
