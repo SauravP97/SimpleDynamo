@@ -3,6 +3,7 @@ require './vendor/autoload.php';
 date_default_timezone_set('Asia/Kolkata');
 use Aws\DynamoDb\Exception\DynamoDbException;
 include_once "./config.php";
+include_once "./ExceptionHandler/DynamoExceptionHandler.php";
 
 class Dynamo
 {
@@ -23,8 +24,9 @@ class Dynamo
             ]);
 
             $this->dynamodb = $sdk->createDynamoDb();
-        } catch (Exception $e) {
-            error_log($e->getMessage());
+        } catch (DynamoDbException $e) {
+            $dynamoExceptionHandler = new DynamoExceptionHandler($e);
+            $dynamoExceptionHandler->showErrorMessage();
             throw new Exception($e->getMessage());
         }
     }
@@ -34,8 +36,9 @@ class Dynamo
             $result = $this->dynamodb->putItem($params);
             return $result;
         }
-        catch(Exception $e){
-            error_log($e->getMessage());
+        catch(DynamoDbException $e){
+            $dynamoExceptionHandler = new DynamoExceptionHandler($e);
+            $dynamoExceptionHandler->showErrorMessage();
             throw new Exception($e->getMessage());
         }
     }
@@ -44,8 +47,9 @@ class Dynamo
         try {
             $result = $this->dynamodb->getItem($params);
             return $result;
-        } catch (Exception $e) {
-            error_log($e->getMessage());
+        } catch (DynamoDbException $e) {
+            $dynamoExceptionHandler = new DynamoExceptionHandler($e);
+            $dynamoExceptionHandler->showErrorMessage();
             throw new Exception($e->getMessage());
         }
     }
@@ -54,8 +58,9 @@ class Dynamo
         try {
             $result = $this->dynamodb->query($params);
             return $result;
-        } catch (Exception $e) {
-            error_log($e->getMessage());
+        } catch (DynamoDbException $e) {
+            $dynamoExceptionHandler = new DynamoExceptionHandler($e);
+            $dynamoExceptionHandler->showErrorMessage();
             throw new Exception($e->getMessage());
         }
     }
@@ -65,19 +70,21 @@ class Dynamo
             $result = $this->dynamodb->updateItem($params);
             return $result;
         }
-        catch(Exception $e){
-            error_log($e->getMessage());
+        catch(DynamoDbException $e){
+            $dynamoExceptionHandler = new DynamoExceptionHandler($e);
+            $dynamoExceptionHandler->showErrorMessage();
             throw new Exception($e->getMessage());
         }
     }
 
     function deleteItem($params){
         try{
-            $result = $this->dynamodb->deleteItem($params);
+            $this->dynamodb->deleteItem($params);
             return true;
         }
-        catch(Exception $e){
-            error_log($e->getMessage());
+        catch(DynamoDbException $e){
+            $dynamoExceptionHandler = new DynamoExceptionHandler($e);
+            $dynamoExceptionHandler->showErrorMessage();
             throw new Exception($e->getMessage());
         }
     }
@@ -87,8 +94,9 @@ class Dynamo
             $result = $this->dynamodb->scan($params);
             return $result;
         }
-        catch(Exception $e){
-            error_log($e->getMessage());
+        catch(DynamoDbException $e){
+            $dynamoExceptionHandler = new DynamoExceptionHandler($e);
+            $dynamoExceptionHandler->showErrorMessage();
             throw new Exception($e->getMessage());
         }
     }

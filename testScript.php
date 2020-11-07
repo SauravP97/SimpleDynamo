@@ -43,7 +43,12 @@ $simpleDynamo->scan("Table-1");
 //$result = $simpleDynamo->update('Auth-Test-Table-2', ['id'=> 'SAURAV_PRATEEK_1001', 'key'=> 'SAURAV_KEY']);
 
 //$simpleDynamo->applyFilters('key1 = :SAURAV_KEY_1');
-//$simpleDynamo->delete('Auth-Test-Table-2', ['id'=>'SAURAV_PRATEEK_1001','key'=>'SAURAV_KEY']);
+try{
+    //$simpleDynamo->delete('Auth-Test-Table-2', ['id'=>'SAURAV_PRATEEK_1001','key'=>'SAURAV_KEY']);
+}
+catch(Exception $e){
+    //error_log($e->getMessage());
+}
 //echo print_r($result, true);
 
 ?>
