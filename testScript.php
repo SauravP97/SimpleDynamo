@@ -24,9 +24,26 @@ $simpleDynamo->update('Table-1',['id'=>'ID_1190', 'key'=>'PREMIUM_VALUE']);
 
 $simpleDynamo->applyFilters('key = :PREMIIUM_PLUS_MEMS');
 $simpleDynamo->delete('Table-1', ['id'=>'ID_1190', 'key'=>'PREMIUM_VALUE']);
-*/
 
 $simpleDynamo->project('id, key');
 $simpleDynamo->applyFilters('key = :PREMIIUM_PLUS_MEMS');
 $simpleDynamo->scan("Table-1");
+*/
+//$result = $simpleDynamo->query('id = :INVOICE','Auth-Test-Table-2');
+//$result = $simpleDynamo->getItem(["id" => "zY6yM+nZTd64"], 'Auth-Test-Table-1');
+/*$result = $simpleDynamo->putItem([
+                'id'=>'SAURAV_PRATEEK_1001', 
+                'key'=>'SAURAV_KEY', 
+                'key1'=> 'SAURAV_KEY_1',
+                'value'=> 'SAURAV_VALUE'
+            ], 'Auth-Test-Table-2');
+*/
+//$simpleDynamo->setUpdateExpression('set value = :SAURAV_VALUE_UPDATED_AGAIN');
+//$simpleDynamo->applyFilters('key1 = :SAURAV_KEY_1');
+//$result = $simpleDynamo->update('Auth-Test-Table-2', ['id'=> 'SAURAV_PRATEEK_1001', 'key'=> 'SAURAV_KEY']);
+
+//$simpleDynamo->applyFilters('key1 = :SAURAV_KEY_1');
+//$simpleDynamo->delete('Auth-Test-Table-2', ['id'=>'SAURAV_PRATEEK_1001','key'=>'SAURAV_KEY']);
+//echo print_r($result, true);
+
 ?>

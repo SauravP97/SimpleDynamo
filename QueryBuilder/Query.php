@@ -1,5 +1,6 @@
 <?php
 include_once "./MarshalerDynamo/MarshalerDynamo.php";
+include_once "ExpressionAttributeSetter.php";
 
 class Query{
     private $tableName;
@@ -10,11 +11,9 @@ class Query{
     private $limit;
     private $sortedInDescendingOrder;
     private $selectAttribute;
-    private $expressionAttributeValues;
-    private $expressionAttributeNames;
+    private $expressionAttributeSetter;
     private $projectAttributes;
     private $consistentRead;
-    private $variableCount;
 
     /*
     * Parameterized Constructor is Used :
@@ -28,9 +27,7 @@ class Query{
         $this->keyCondition = $keyCondition;
         $this->tableName = $tableName;
         $this->marshaler = new MarshalerDynamo();
-        $this->expressionAttributeNames = array();
-        $this->expressionAttributeValues = array();
-        $this->variableCount = 1;
+        $this->expressionAttributeSetter = new ExpressionAttributeSetter();
     }
 
     /*
@@ -43,17 +40,17 @@ class Query{
     * in which the operation is destined to be made.
     */
     function getFormattedQuery(){
-        $this->keyCondition = $this->checkForReservedKeywords($this->keyCondition, " ");
-        $keyConditionChanged = $this->checkForQueryValues($this->keyCondition);
+        $this->keyCondition = $this->expressionAttributeSetter->checkForReservedKeywords($this->keyCondition, " ");
+        $keyConditionChanged = $this->expressionAttributeSetter->checkForQueryValues($this->keyCondition);
         $queryParams = [
             "TableName" => $this->tableName,
             "KeyConditionExpression" => $keyConditionChanged
         ];
-        if(count($this->expressionAttributeNames)){
-            $queryParams['ExpressionAttributeNames'] = $this->expressionAttributeNames;
+        if(count($this->expressionAttributeSetter->getExpressionAttributeNames())){
+            $queryParams['ExpressionAttributeNames'] = $this->expressionAttributeSetter->getExpressionAttributeNames();
         }
-        if(count($this->expressionAttributeValues)){
-            $queryParams['ExpressionAttributeValues'] = $this->marshaler->marshalItem($this->expressionAttributeValues);
+        if(count($this->expressionAttributeSetter->getExpressionAttributeValues())){
+            $queryParams['ExpressionAttributeValues'] = $this->marshaler->marshalItem($this->expressionAttributeSetter->getExpressionAttributeValues());
         }
         if($this->projectAttributes){
             $queryParams['ProjectionExpression'] = $this->projectAttributes;
@@ -80,7 +77,7 @@ class Query{
     }
 
     function setProjectAttribute($projectAttributes){
-        $this->projectAttributes = $this->checkForReservedKeywords($projectAttributes, ",");
+        $this->projectAttributes = $this->expressionAttributeSetter->checkForReservedKeywords($projectAttributes, ",");
     }
 
     function setConsistentReadAttribute(){
@@ -104,56 +101,19 @@ class Query{
     }
 
     function applyFilters($filterExpression){
-        $this->filterExpression = $this->checkForReservedKeywords($filterExpression, " ");
-        $this->filterExpression = $this->checkForQueryValues($this->filterExpression);
-    }
-    
-    /*
-    * Function checks for presence of a reserved
-    * keyword in the input string, if any reserved
-    * keyword is found then it replaces it with a
-    * #(hash) string and maps it in the ExpressionAttributeNames
-    * array for the future reference of DynamoDB
-    */
-    function checkForReservedKeywords($inputString, $delimiter){
-        $tokens = explode($delimiter, $inputString);
-        $preservedKeywords = unserialize(PRESERVED_KEYWORDS);
-        $formattedString = '';
-        foreach($tokens as $token){
-            $token = trim($token);
-            if(in_array($token, $preservedKeywords)){
-                $this->expressionAttributeNames['#'.$token] = $token;
-                $token = '#'.$token;
-            }
-            $formattedString = $formattedString == '' ? $token : $formattedString.$delimiter.$token;
-        }
-        return $formattedString;
+        $this->filterExpression = $this->expressionAttributeSetter->checkForReservedKeywords($filterExpression, " ");
+        $this->filterExpression = $this->expressionAttributeSetter->checkForQueryValues($this->filterExpression);
     }
 
-    /*
-    * Function checks for any values present in the
-    * query string. If a value is found then it is
-    * replaced with a :(colon) string and that value is
-    * mapped in the ExpressionAttributeValues array for
-    * the future reference of DynamoDB
-    */
-    function checkForQueryValues($inputQuery){
-        $queryTokens = explode(" ",$inputQuery);
-        $keyConditionChanged = '';
-
-        foreach($queryTokens as $token){
-            $token = trim($token);
-            $tokenChanged = $token;
-            if($token[0] == ":"){   //Checking for expression attribute values
-                $this->expressionAttributeValues[':expVar'.strval($this->variableCount)] = substr($token,1);
-                $tokenChanged = ':expVar'.strval($this->variableCount);
-                $this->variableCount++;
+    function unmarshalResult($result){
+        if(@$result['Items'] && count($result['Items'])){
+            $unmarshalItems = [];
+            foreach($result['Items'] as $item){
+                $unmarshalItems[] = $this->marshaler->unmarshalItem($item); 
             }
-            $keyConditionChanged = $keyConditionChanged == '' ? $tokenChanged : 
-                                        $keyConditionChanged.' '.$tokenChanged;
+            $result['Items'] = $unmarshalItems;
         }
-
-        return $keyConditionChanged;
+        return $result;
     }
 }
 ?>

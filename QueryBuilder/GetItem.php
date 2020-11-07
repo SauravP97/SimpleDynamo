@@ -53,5 +53,12 @@ class GetItem{
     function setConsistentReadAttribute(){
         $this->consistentRead = true;
     }
+
+    function unmarshalResult($result){
+        if(@$result['Item'] && count($result['Item'])){
+            $result['Item'] = $this->marshaler->unmarshalItem($result['Item']);
+        }
+        return $result;
+    }
 }
 ?>

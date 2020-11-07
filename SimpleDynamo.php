@@ -50,12 +50,12 @@ class SimpleDynamo{
     *      making the final query.
     */
     
-    function putItem($query, $tableName){
-        $putItem = new PutItem($query, $tableName);
-        $this->queryParams = $putItem->getFormattedQuery();
+    function putItem($item, $tableName){
+        $putItem = new PutItem($item, $tableName);
         try{
+            $this->queryParams = $putItem->getFormattedQuery();
             $this->showQueryParameters();
-            //$this->dynamoDb->putItem($dynamoQuery);
+            $this->dynamoDb->putItem($this->queryParams);
         }
         catch(Exception $e){
             throw new Exception($e->getMessage());
@@ -76,7 +76,8 @@ class SimpleDynamo{
             //Generating the formatted query
             $this->queryParams = $getItem->getFormattedQuery();
             $this->showQueryParameters();
-            //$this->dynamoDb->putItem($dynamoQuery);
+            $result = $this->dynamoDb->getItem($this->queryParams);
+            return $getItem->unmarshalResult($result);
         }
         catch(Exception $e){
             throw new Exception($e->getMessage());
@@ -122,7 +123,8 @@ class SimpleDynamo{
         try{
             $this->queryParams = $query->getFormattedQuery();
             $this->showQueryParameters();
-            //$this->dynamoDb->putItem($dynamoQuery);
+            $result = $this->dynamoDb->query($this->queryParams);
+            return $query->unmarshalResult($result);
         }
         catch(Exception $e){
             throw new Exception($e->getMessage());
@@ -140,6 +142,7 @@ class SimpleDynamo{
         try{
             $this->queryParams = $update->getFormattedQuery();
             $this->showQueryParameters();
+            $this->dynamoDb->updateItem($this->queryParams);
         }
         catch(Exception $e){
             throw new Exception($e->getMessage());
@@ -154,6 +157,7 @@ class SimpleDynamo{
         try{
             $this->queryParams = $delete->getFormattedQuery();
             $this->showQueryParameters();
+            $this->dynamoDb->deleteItem($this->queryParams);
         }
         catch(Exception $e){
             throw new Exception($e->getMessage());
@@ -176,6 +180,7 @@ class SimpleDynamo{
             throw new Exception($e->getMessage());
         }
     }
+
     /*
     * Function acts as a logger to
     * print the query parameters. If
