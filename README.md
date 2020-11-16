@@ -12,7 +12,7 @@ Below are the attributes which this library supports in total. We can combine th
     <p>
     We use Projection Attributes when we need to specify a particular set of keys which we need to fetch (only) while querying.
     
-    **Simple Dynamo Code :**
+    > Simple Dynamo Code :
   
 ```
     //Creating a new instance
@@ -25,7 +25,7 @@ Below are the attributes which this library supports in total. We can combine th
     <p>
     We use Index Name Attribute when we are required to specify an index name while querying in DynamoDB.
   
-    **Simple Dynamo Code :**
+    > Simple Dynamo Code :
 
 ```
     //Creating a new instance
