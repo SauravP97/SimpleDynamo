@@ -202,3 +202,13 @@ Below are the attributes which this library supports in total. We can combine th
     //Perform a Scan Operation
     $simpleDynamo->scan(Table_Name);
 ```
+
+## Eliminating Expression Attribute Values and Names (Code Optimisation)
+In order to make the code simpler the library allows the user to skip setting **ExpressionAttributeValues** and **ExpressionAttributeNames** during the operation. The library looks for any preserved keyword in your operation code and itself places them in its own array. It also looks for the values in you operation code and take care of them as well. This allows the user to write a lot less code.
+
+But in order to make this possible, users are expected to follow a particular coding standars. Whenever we write an expression in our operation we need to specify a value with a **':'** prefix in order to tell the library that it is a value.
+
+> gsi_key = :value1 and gsi_value = :value2
+
+Here in the above expression we are telling the library that **value1** and **value2** are the values and need to be placed in the **ExpressionAttributeValues** array, and the library will do that for you.
+    
