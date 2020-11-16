@@ -114,3 +114,91 @@ Below are the attributes which this library supports in total. We can combine th
     $simpleDynamo->setUpdateExpression("set gsi_key = :value1, gsi_value = :value2");
 ```
 
+## Simple Dynamo Operations
+
+- ### Put Item
+    <p>
+    The operation inserts an item into our DynamoDB Table
+    
+    > Simple Dynamo Code :
+    
+```
+    //Creating a new instance
+    $simpleDynamo = new SimpleDynamo();
+    //Perform a Put-Item Operation
+    $simpleDynamo->putItem([
+                    'key1' => 'value1', 
+                    'key2' => 'value2', 
+                    'key3' => 'value3',
+                    'key4' => 'value4'
+                ],  Table_Name);
+```
+
+
+- ### Get Item
+    <p>
+    The operation fetches an item from the Dynamo Table given a specified unique primary key.
+    
+    > Simple Dynamo Code :
+    
+```
+    //Creating a new instance
+    $simpleDynamo = new SimpleDynamo();
+    //Perform a Get-Item Operation
+    $simpleDynamo->getItem(primary_key, Table_Name);
+```
+
+- ### Query
+    <p>
+    The operation queries into the Dynamo Table.
+    
+    > Simple Dynamo Code :
+    
+```
+    //Creating a new instance
+    $simpleDynamo = new SimpleDynamo();
+    //Perform a Query Operation
+    $simpleDynamo->query(key_condition_expression, Table_Name);
+```
+
+
+- ### Update
+    <p>
+    The operation updates a particular item in Dynamo table.
+    
+    > Simple Dynamo Code :
+    
+```
+    //Creating a new instance
+    $simpleDynamo = new SimpleDynamo();
+    //Perform an Update Operation
+    $simpleDynamo->update(Table_Name, primary_key);
+```
+
+
+- ### Delete Item
+    <p>
+    The operation deletes an item from the Dynamo Table given a specified unique primary key.
+    
+    > Simple Dynamo Code :
+    
+```
+    //Creating a new instance
+    $simpleDynamo = new SimpleDynamo();
+    //Perform a Delete-Item Operation
+    $simpleDynamo->delete(Table_Name, primary_key);
+```
+
+
+- ### Scan
+    <p>
+    The operation scans the Dynamo Table according to a given filter expression.
+    
+    > Simple Dynamo Code :
+    
+```
+    //Creating a new instance
+    $simpleDynamo = new SimpleDynamo();
+    //Perform a Scan Operation
+    $simpleDynamo->scan(Table_Name);
+```
