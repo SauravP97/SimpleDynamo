@@ -212,3 +212,7 @@ But in order to make this possible, users are expected to follow a particular co
 
 Here in the above expression we are telling the library that **value1** and **value2** are the values and need to be placed in the **ExpressionAttributeValues** array, and the library will do that for you.
     
+## Eliminating the use of Marshaler on User end
+The library does not require users to marshal or unmarshal items on their own. When you perform an operation in dynamo with this library it looks for the items which are needed to marshalled and it marshals them for the user.
+
+In the same way when a result set is obtained it looks for the items which are required to be unmarshalled and does that as well for the user.
