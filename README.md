@@ -33,3 +33,84 @@ Below are the attributes which this library supports in total. We can combine th
     //Setting Index Name
     $simpleDynamo->setIndexName('your-index-name');
 ```
+
+- ### Consistent Read Attribute
+    <p>
+    We use Consistent Read Attribute when we are required to specify a strongly consistent read operation in DynamoDB.
+  
+    > Simple Dynamo Code :
+
+```
+    //Creating a new instance
+    $simpleDynamo = new SimpleDynamo();
+    //Set Consistent Read attribute
+    $simpleDynamo->makeConsistentRead();
+```
+
+
+- ### Scan Index Attribute (Descending Order)
+    <p>
+    We use this attribute when we need to fetch results sorted in descending order. By default DynamoDB gives result sorted in the ascending order. 
+  
+    > Simple Dynamo Code :
+
+```
+    //Creating a new instance
+    $simpleDynamo = new SimpleDynamo();
+    //Set Scan Index attribute
+    $simpleDynamo->setScanIndexAttribute();
+```
+
+- ### Limit Attribute
+    <p>
+    We use this attribute when we need to Limit the number of items returned in a result set. We need to specify the number of items which we want to be returned in a single operation.
+  
+    > Simple Dynamo Code :
+
+```
+    //Creating a new instance
+    $simpleDynamo = new SimpleDynamo();
+    //Set Limit Attribute
+    $simpleDynamo->limitQueryItems(number_of_items);
+```
+
+
+- ### Select Attribute
+    <p>
+    In case you want to fetch only the count of items present in your result set, then this attribute can come in handy.
+  
+    > Simple Dynamo Code :
+
+```
+    //Creating a new instance
+    $simpleDynamo = new SimpleDynamo();
+    //Set Select Attribute
+    $simpleDynamo->setSelectAttribute("Count");
+```
+
+- ### Filter Expression Attribute
+    <p>
+    We use this attribute, if we want to apply some additional filters to our query operation.
+  
+    > Simple Dynamo Code :
+
+```
+    //Creating a new instance
+    $simpleDynamo = new SimpleDynamo();
+    //Set Filter Expression Attribute
+    $simpleDynamo->applyFilters("gsi_key = :value1 and gsi_value = :value2");
+```
+
+- ### Update Expression Attribute
+    <p>
+    We use this attribute, if we want to set an update expression while performing update operation in Dynamo.
+  
+    > Simple Dynamo Code :
+
+```
+    //Creating a new instance
+    $simpleDynamo = new SimpleDynamo();
+    //Set Update Expression Attribute
+    $simpleDynamo->setUpdateExpression("set gsi_key = :value1, gsi_value = :value2");
+```
+
