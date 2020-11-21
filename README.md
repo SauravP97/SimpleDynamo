@@ -1,4 +1,4 @@
-# SimpleDynamo
+# Simple Dynamo
 ## Introduction
 Simple Dynamo is a Library which allows you to write less code when you are performing operations in Amazon DynamoDB. If you have written codes for operations in Dynamo then you must have experienced repition of some parameters again and again every time. May it be putting your values in **ExpressionAttributeValues** array or making sure you declare the reserved keywords in **ExpressionAttributeNames**, I have built this library to get rid of these repititions. With this library all these operations can be performed by writing a lot less code than before.
 
